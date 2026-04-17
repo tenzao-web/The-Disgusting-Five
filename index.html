@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ОтвратительнаяПятёрка</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap');
+:root{--leather:#2c1a0e;--gold:#c9a84c;--gold-light:#e8c97a;--ink:#1a0f00;--parchment:#f5e9c8;--parchment-dark:#e8d5a0;--red-ink:#8b1a1a;--spine-w:44px;--pw:380px;--ph:580px;}
+*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;height:100%;background:radial-gradient(ellipse at 50% 30%,#1e0f04,#080300);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'IM Fell English',serif;overflow:hidden;user-select:none;}
+.dust{position:fixed;inset:0;pointer-events:none;z-index:0;}.dust-particle{position:absolute;border-radius:50%;background:rgba(201,168,76,0.5);animation:floatUp linear infinite;}@keyframes floatUp{0%{transform:translateY(100vh) translateX(0);opacity:0;}10%{opacity:1;}90%{opacity:.4;}100%{transform:translateY(-5vh) translateX(20px);opacity:0;}}
+.book-header{position:relative;z-index:10;font-family:'Cinzel Decorative',serif;font-size:11px;letter-spacing:5px;color:var(--gold);opacity:.7;text-shadow:0 0 18px rgba(201,168,76,.5);margin-bottom:14px;}
+.scene{position:relative;z-index:10;perspective:2400px;display:flex;align-items:center;justify-content:center;}.book{position:relative;display:flex;align-items:stretch;filter:drop-shadow(0 40px 80px rgba(0,0,0,.95));transform-style:preserve-3d;animation:bookAppear 1.4s cubic-bezier(.2,.8,.3,1) both;}@keyframes bookAppear{from{transform:scale(.85);opacity:0;}to{transform:scale(1);opacity:1;}}
+.spine{width:var(--spine-w);background:linear-gradient(90deg,#060200,#1a0a00 35%,#2c1a0e 65%,#1a0a00);border-radius:6px 0 0 6px;display:flex;align-items:center;justify-content:center;box-shadow:-6px 0 20px rgba(0,0,0,.8),inset -4px 0 8px rgba(0,0,0,.5);flex-shrink:0;}.spine-text{writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--gold);opacity:.65;}
+.pages-stack{position:absolute;right:-6px;top:2px;bottom:2px;width:10px;background:repeating-linear-gradient(to bottom,#f0e0b0,#e8d090 1px,#f4e8c1 2px);border-radius:0 3px 3px 0;box-shadow:3px 0 8px rgba(0,0,0,.4);}
+.page{position:relative;overflow:hidden;flex-shrink:0;}.page-left{background:linear-gradient(to right,#dfc880,#e8d090 4%,var(--parchment) 12%);box-shadow:inset -6px 0 12px rgba(0,0,0,.12),inset 4px 0 6px rgba(0,0,0,.06);}.page-right{background:linear-gradient(to left,#dfc880,#e8d090 4%,var(--parchment) 12%);box-shadow:inset 6px 0 12px rgba(0,0,0,.12),inset -4px 0 6px rgba(0,0,0,.06);border-left:1px solid rgba(139,90,43,.15);}
+.page::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 15%,rgba(139,90,43,.07),transparent 55%),radial-gradient(ellipse at 20% 85%,rgba(139,90,43,.05),transparent 45%);pointer-events:none;z-index:1;}
+.page-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(transparent,transparent 24px,rgba(139,90,43,.09) 25px);pointer-events:none;z-index:0;}.page-frame{position:absolute;inset:14px;border:1px solid rgba(139,90,43,.22);pointer-events:none;z-index:3;}.page-frame::after{content:'';position:absolute;inset:4px;border:.5px solid rgba(139,90,43,.12);}
+.co{position:absolute;width:22px;height:22px;z-index:4;opacity:.38;}.co svg{width:100%;height:100%;}.co-tl{top:11px;left:11px;}.co-tr{top:11px;right:11px;transform:scaleX(-1);}.co-bl{bottom:11px;left:11px;transform:scaleY(-1);}.co-br{bottom:11px;right:11px;transform:scale(-1);}
+.pg-num{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:rgba(80,40,10,.45);z-index:5;}
+.page-content{position:relative;z-index:2;padding:38px 32px 36px 32px;height:100%;display:flex;flex-direction:column;overflow:hidden;}
+.ch-ornament{text-align:center;color:var(--gold);font-size:16px;letter-spacing:8px;margin-bottom:4px;opacity:.6;}.ch-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:4px;color:rgba(80,40,10,.5);text-align:center;text-transform:uppercase;margin-bottom:3px;}.ch-title{font-family:'Cinzel',serif;font-size:13px;color:var(--ink);text-align:center;line-height:1.5;margin-bottom:6px;letter-spacing:.5px;}.ch-title em{font-family:'IM Fell English',serif;font-size:10.5px;font-style:italic;font-weight:400;}
+.divider{text-align:center;color:rgba(139,90,43,.4);font-size:12px;letter-spacing:6px;margin:5px 0;}.body-text{font-size:11px;line-height:1.72;color:var(--ink);text-align:justify;margin-bottom:6px;hyphens:auto;}.body-text+.body-text{text-indent:14px;}.drop-cap::first-letter{font-family:'Cinzel Decorative',serif;font-size:40px;float:left;line-height:.74;margin-right:5px;margin-top:5px;color:var(--red-ink);text-shadow:1px 1px 2px rgba(0,0,0,.15);}
+.italic-text{font-style:italic;font-size:10.5px;line-height:1.7;color:rgba(26,15,0,.72);text-align:center;margin:5px 0;}.quote-text{font-style:italic;font-size:10.5px;line-height:1.75;color:var(--red-ink);text-align:center;margin:7px 8px;padding:6px 12px;border-left:2px solid rgba(139,26,26,.28);border-right:2px solid rgba(139,26,26,.28);}
+.art-block{position:relative;background:linear-gradient(135deg,rgba(139,90,43,.06),rgba(201,168,76,.09));border:1px solid rgba(139,90,43,.28);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;margin:6px 0;}.art-block::before{content:'';position:absolute;inset:5px;border:.5px solid rgba(139,90,43,.18);pointer-events:none;}.art-fc{position:absolute;width:16px;height:16px;border-color:rgba(139,90,43,.38);border-style:solid;}.art-fc.tl{top:3px;left:3px;border-width:2px 0 0 2px;}.art-fc.tr{top:3px;right:3px;border-width:2px 2px 0 0;}.art-fc.bl{bottom:3px;left:3px;border-width:0 0 2px 2px;}.art-fc.br{bottom:3px;right:3px;border-width:0 2px 2px 0;}.art-icon{font-size:20px;opacity:.22;margin-bottom:4px;position:relative;z-index:2;}.art-caption{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:1.5px;color:rgba(139,90,43,.45);text-align:center;padding:0 8px;position:relative;z-index:2;}.art-block img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;}
+.cover-wrap{position:relative;background:linear-gradient(135deg,#1a0905,#3d2410 45%,#2c1a0e 75%,#1a0905);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;}.cover-wrap::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.025) 4px),repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(0,0,0,.015) 4px);}.cover-bo{position:absolute;inset:12px;border:2px solid rgba(201,168,76,.38);border-radius:2px;}.cover-bi{position:absolute;inset:18px;border:1px solid rgba(201,168,76,.18);border-radius:1px;}.cover-ot{position:absolute;top:26px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:18px;letter-spacing:10px;opacity:.45;}.cover-ob{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:18px;letter-spacing:10px;opacity:.45;}
+.cover-art{width:240px;height:180px;border:1px solid rgba(201,168,76,.28);background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;flex-direction:column;color:rgba(201,168,76,.2);font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:2px;text-align:center;position:relative;z-index:2;margin-bottom:18px;overflow:hidden;}.cover-art img{width:100%;height:100%;object-fit:cover;}
+.cover-main{font-family:'Cinzel Decorative',serif;font-size:20px;color:var(--gold);text-align:center;letter-spacing:2px;text-shadow:0 0 28px rgba(201,168,76,.4),0 2px 4px rgba(0,0,0,.9);line-height:1.35;padding:0 28px;position:relative;z-index:2;}.cover-sub{font-family:'Cinzel',serif;font-size:9px;color:rgba(201,168,76,.55);letter-spacing:5px;margin-top:7px;position:relative;z-index:2;}.cover-tome{font-family:'Cinzel',serif;font-size:8px;color:rgba(201,168,76,.35);letter-spacing:3.5px;margin-top:13px;position:relative;z-index:2;}
+.dedication{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center;}.end-page{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:30px;}.end-ornament{font-size:26px;color:rgba(139,90,43,.45);letter-spacing:10px;margin:10px 0;}.end-title{font-family:'Cinzel Decorative',serif;font-size:12px;color:var(--red-ink);margin:7px 0;opacity:.85;}.inline-art{margin:6px 0;flex-shrink:0;}
+.book-glow{position:absolute;left:var(--spine-w);top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,.18) 30%,rgba(201,168,76,.25) 50%,rgba(201,168,76,.18) 70%,transparent);pointer-events:none;z-index:20;}
+.spreads-container{position:relative;overflow:hidden;border-radius:0 4px 4px 0;transition:width .6s cubic-bezier(.4,0,.2,1);}.spread{position:absolute;inset:0;display:flex;opacity:0;pointer-events:none;}.spread.active{opacity:1;pointer-events:auto;position:relative;}
+#flipper{position:absolute;top:0;bottom:0;transform-origin:left center;transform-style:preserve-3d;z-index:50;pointer-events:none;backface-visibility:hidden;}#flipper .flip-front,#flipper .flip-back{position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;}#flipper .flip-back{transform:rotateY(180deg);}#flipper.flipping-forward{animation:flipForward .75s cubic-bezier(.36,.07,.19,.97) forwards;}#flipper.flipping-back{animation:flipBackward .75s cubic-bezier(.36,.07,.19,.97) forwards;}
+@keyframes flipForward{0%{transform:rotateY(0);filter:brightness(1);}50%{filter:brightness(.85);}100%{transform:rotateY(-180deg);filter:brightness(1);}}
+@keyframes flipBackward{0%{transform:rotateY(-180deg);filter:brightness(1);}50%{filter:brightness(.85);}100%{transform:rotateY(0);filter:brightness(1);}}
+.nav{position:relative;z-index:10;display:flex;align-items:center;gap:18px;margin-top:16px;}.nav-btn{background:none;border:1px solid rgba(201,168,76,.28);color:var(--gold);font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:3px;padding:7px 18px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}.nav-btn::before{content:'';position:absolute;inset:0;background:rgba(201,168,76,.06);transform:scaleX(0);transform-origin:left;transition:transform .25s;}.nav-btn:hover:not(:disabled)::before{transform:scaleX(1);}.nav-btn:hover:not(:disabled){border-color:rgba(201,168,76,.55);color:var(--gold-light);}.nav-btn:disabled{opacity:.2;cursor:not-allowed;}.pg-counter{font-family:'Cinzel',serif;font-size:9px;color:rgba(201,168,76,.38);letter-spacing:2px;min-width:90px;text-align:center;}
+</style></head><body>
+<div class="dust" id="dustBox"></div>
+<div class="book-header">ХРОНИКИ МИРЕЛЯ</div>
+<div class="scene"><div class="book" id="book">
+<div class="spine"><span class="spine-text">ТОМ I · ВСТРЕЧА</span></div>
+<div style="position:relative;display:flex;">
+<div class="spreads-container" id="spreadsContainer">
+<div class="spread active" id="sp0">
+
+  <div class="cover-wrap" id="coverWrap" style="width: 380px; height: 580px; border-radius: 0px 4px 4px 0px;">
+    <div class="cover-bo"></div>
+    <div class="cover-bi"></div>
+    <div class="cover-ot">✦ ✦ ✦</div>
+    <div class="cover-art">
+      <img src="https://i.postimg.cc/zXM7Bn6S/Oblozka.png" alt="">
+    </div>
+    <div class="cover-main">Отвратительная<br>Пятёрка</div>
+    <div style="color:var(--gold);opacity:0.35;letter-spacing:7px;font-size:11px;margin:6px 0;position:relative;z-index:2;">— ✦ —</div>
+    <div class="cover-sub">ХРОНИКИ МИРЕЛЯ</div>
+    <div class="cover-tome">ТОМ ПЕРВЫЙ · ВСТРЕЧА</div>
+    <div class="cover-ob">✦ ✦ ✦</div>
+  </div>
+
+</div>
+
+<div class="spread" id="sp1">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content" style="padding:20px;">
+    <div class="art-block" style="flex:0 0 auto;position:relative;height:521px;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <div class="art-caption"><br></div>
+      <img src="https://i.postimg.cc/cHtVbspY/Miral'.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+  </div>
+  <div class="pg-num"></div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="dedication" style="position:relative;">
+      <div class="ch-ornament" style="font-size:26px;margin-bottom:18px;">⚜</div>
+      <p class="italic-text" style="font-size:14px;line-height:1.75;margin-bottom:18px;font-family:'Times New Roman',serif;">
+        Тем, кто шёл до конца.<br>И тем, кто не смог.
+      </p>
+      <div class="divider">— ✦ ✦ ✦ —</div>
+      <p class="italic-text" style="margin-top:18px;font-size:14px;opacity:0.72;font-family:'Times New Roman',serif;line-height:1.8;">
+        История, записанная по памяти,<br>
+        по слухам, по ранам на теле<br>
+        и по снам, что не отпускают<br>
+        по сей день.
+      </p>
+      <div style="margin-top:28px;font-family:'Cinzel',serif;font-size:8.5px;color:rgba(80,40,10,0.4);letter-spacing:2px;">
+        — Бард Таэлин из Каладора
+      </div>
+      <div class="ch-ornament" style="font-size:14px;margin-top:28px;opacity:0.28;">✦ ✦ ✦</div>
+    </div>
+  </div>
+  <div class="pg-num"></div>
+</div>
+</div>
+
+<div class="spread" id="sp2">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-title" style="position:relative;font-size:11px;"><h2>Слово барда</h2></div>
+    <p class="body-text drop-cap" style="position: relative; font-size: 11px; line-height: 1.6;">
+      Их называли по-разному. «Отвратительная пятёрка» — так кричали им вслед в тавернах. «Лже-герои» — так шептались стражники на воротах городов, когда те проходили мимо, оставляя за собой шлейф из дорожной пыли и неоднозначной репутации. «Потерянные» — так называл их мой учитель, старый бард Вено, и в его устах это звучало не как оскорбление, а как самое точное определение.
+    </p>
+    <p class="body-text" style="position: relative; font-size: 11px; line-height: 1.6;">
+      Я видел их. Не всегда вблизи, не всегда в нужный момент — бард редко оказывается там, где происходит настоящее. Чаще всего я подбирал осколки: разговоры у костра, которые они думали вести наедине; следы на дороге; плачущего ребёнка, которому кто-то оставил деревянную птицу у порога; и поле белых цветов там, где ещё вчера была только кровь.
+    </p>
+    <p class="body-text" style="position: relative; font-size: 11px; line-height: 1.6;">
+      Я мог бы написать эпос. Гимн. Балладу, что пели бы на площадях. Но это была бы ложь — красивая, удобная, тёплая. А они заслуживают правды. Даже если правда выглядит так: дварф, которого приходилось нести с таверны, пока он пел про покойных кузенов. Эльфийка, которая бранилась на трёх языках, а потом тайком проверяла, все ли спят и не замёрзли ли.
+    </p>
+    <p class="body-text" style="position: relative; font-size: 11px; line-height: 1.6;">
+      Это первый том из семи. В нём нет великих сражений. В нём есть встреча — та самая, с которой всё началось. Читайте медленно. Они того стоят.
+    </p>
+    <p class="italic-text" style="margin-top:8px;position:relative;font-size:11px;">
+      — записано в таверне «Сломанное перо»,<br>
+      в год сорок второй после основания Каладора
+    </p>
+  </div>
+  <div class="pg-num">1</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="art-block" style="flex:0 0 auto;position:relative;height:506px;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <img src="https://i.postimg.cc/MG2ZDFf8/Bard-Taelin-iz-Kaladora.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+  </div>
+  <div class="pg-num">2</div>
+</div>
+</div>
+
+<div class="spread" id="sp3">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-ornament" style="position:relative;">⚒ ✦ ⚒</div>
+    <div class="ch-label" style="position:relative;">ГЛАВА ПЕРВАЯ</div>
+    <div class="ch-title" style="position:relative;">Годрин<br><em>или История о том, как делают невозможное</em></div>
+    <div class="divider" style="margin-bottom:8px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Говорят, что дварфы рождаются уже зная, для чего они пришли в мир. Камень им говорит. Огонь в горне говорит. Молот в руке говорит ещё громче. Годрину молот говорил много, но в основном о том, что нужно ударить сильнее.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Он сидел в своей кузнице в предгорьях Громоборода уже семнадцать лет — с тех пор, как услышал, как плачет мать, потерявшая сына на демонской волне. Тогда ему было сорок два — по меркам дварфов примерно шестнадцать у людей: возраст, когда начинают понимать, что мир не такой, каким его рисовали в сказках.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Мальчишка тот звался Брок. Хороший был воин. Умелый. Крепкий. Но не настолько, чтобы выстоять против твари, не знающей усталости. Меч его сломался в схватке. И вместе с мечом сломалось что-то ещё.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      — Нужен другой меч, — сказал тогда Годрин. Все дварфы вокруг посчитали это очевидной глупостью. Но Годрин имел в виду другое.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Нужен меч, которым можно победить демона, даже если ты не великий воин. Меч, который помнит. Который чувствует. Который несёт в себе всё то горе, что люди уже накопили, и умеет этим горем ударить.
+    </p>
+  </div>
+  <div class="pg-num">3</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Семнадцать лет он ковал. Ломал. Плавил снова. Ругался на трёх языках. Соседи привыкли к звону молота и к запаху горящего металла. Привыкли и к тому, как Годрин иногда выходил из кузницы с ошарашенным видом, садился на камень и долго смотрел в небо.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      — Годрин, ты опять сжёг брови, — говорила ему жена соседа.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      — Знаю, — отвечал он. — Они вырастут.
+    </p>
+    <div class="art-block inline-art" style="height:100px;position:relative;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <div class="art-caption">АРТ II · КУЗНИЦА ГОДРИНА В КАЛ-ДУРЕ</div>
+      <img src="https://i.postimg.cc/rmZjrbQq/ART-II-KUZNICA-GODRINA-V-KAL-DURE.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Меч появился не тогда, когда он нашёл правильный сплав. Меч появился тогда, когда Годрин понял, что делает его не для себя. В тот день он не ел, не спал и думал только о лице той матери. Молот лёг в руку сам. Металл слушался как живой.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      К утру на наковальне лежал меч. Широкий, немного грубоватый, с рукоятью, в которую были вплавлены маленькие камни — каждый означал имя тех, кого уже нет. Годрин не мог объяснить, откуда он знал их имена. Просто знал.
+    </p>
+    <p class="quote-text" style="position:relative;">
+      «Бремя Королевы» — так он его назвал.<br>
+      Потому что правители несут больше всех.<br>
+      И никогда не имеют права устать.
+    </p>
+  </div>
+  <div class="pg-num">4</div>
+</div>
+</div>
+
+<div class="spread" id="sp4">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Меч был не для него — Годрин понимал это с первого взгляда. Слишком лёгкий для его рук, слишком тонкий для его силы. Ему нужен был носитель. Тот, кто умеет нести.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Объявление о том, что кузнец из Громоборода ищет «достойного носителя особого оружия», разошлось по землям быстро — слово «достойный» всегда привлекает тех, кому нечего больше терять. Пришли многие. Ушли разочарованными почти все.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      До того дня, пока не пришёл тифлинг с тёмными глазами, в которых было что-то, что Годрин узнал сразу.
+    </p>
+    <p class="italic-text" style="position:relative;">— Ты нёс тяжело, — сказал Годрин. — Это видно.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Тифлинг не ответил. Но руку протянул. И меч лёг в неё так, будто всегда там и был.
+    </p>
+    <div class="divider" style="position:relative;">— ✦ —</div>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Дварф посмотрел долго, кивнул и сказал:
+    </p>
+    <p class="italic-text" style="position:relative;">— Хорошо. Идём.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Малзерис ждал продолжения. Продолжения не последовало — Годрин уже шёл к выходу, закидывая за спину мешок и огромный молот, который при ходьбе покачивался с тихим металлическим звоном.
+    </p>
+  </div>
+  <div class="pg-num">5</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="art-block" style="flex:1 1 0%;position:relative;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <img src="https://i.postimg.cc/NfqJkhQ5/art-transparent-background-queens-burden-600x600.webp" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+    <div class="art-caption" style="padding-top:6px;position:relative;"><b>«БРЕМЯ КОРОЛЕВЫ» — МЕЧ ГОДРИНА</b></div>
+    
+  </div>
+  <div class="pg-num">6</div>
+</div>
+</div>
+
+<div class="spread" id="sp5">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-ornament" style="position:relative;">✧ ✦ ✧</div>
+    <div class="ch-label" style="position:relative;">ГЛАВА ВТОРАЯ</div>
+    <div class="ch-title" style="position:relative;">Жрец<br><em>или Та, чьё имя не для вас</em></div>
+    <div class="divider" style="margin-bottom:8px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Она пережила двенадцать групп. Не потому что была бессмертна — хотя многие так и думали, — а потому что умела выживать там, где остальные переставали стараться. Это не подвиг, скажет она вам сразу. Это просто долг.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Эльфам не свойственна торопливость. Их жизнь длинна настолько, что человеческие десятилетия воспринимаются как один тревожный сезон. Именно поэтому она давно перестала запоминать лица — не из жестокости, а из самосохранения. Лица исчезают слишком быстро. Это больно. А боль — лишнее.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      — Зовите меня Жрец, — говорила она каждой новой группе. И каждая думала, что это странно. А потом переставала думать об этом, потому что Жрец умела делать кое-что поважнее имён — она умела возвращать мёртвых.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Её бога люди забыли так давно, что даже название успело истереться из книг. Она называла его «Забытый библиотекарь» — будто кто-то очень мудрый сидит в пыльном углу огромного здания, среди стеллажей, которые никто больше не читает, и следит, чтобы записи велись верно.
+    </p>
+  </div>
+  <div class="pg-num">7</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; height: 85px; overflow: hidden; flex: 0 0 auto; line-height: 1.6;">
+      В первый раз он дал ей знамение, когда она была ещё достаточно молода, чтобы верить, что всё закончится быстро. Она запомнила его слова, кроме одной фразы, смысл которой ускользал до сих пор:
+    </p>
+    <p class="quote-text" style="position:relative;">
+      «Путь будет слишком долгим<br>
+      и слишком болезненным для тебя.<br>
+      Но прошу — дойди до конца».
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Двенадцать групп — и каждый раз она доходила до конца одна. Именно поэтому о ней слагали страшные истории. Не то чтобы неправда. Но и не вся правда.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Правда была в том, что каждый раз, похоронив очередного товарища, она брала долгую паузу. Уходила в лес или на вершину горы. Сидела там, пока боль не становилась чем-то, с чем можно снова идти вперёд. А потом шла.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Тринадцатая группа должна была быть последней. Она решила это ещё до того, как увидела их. Просто иногда нужно сказать себе «последняя», чтобы найти силы начать снова.
+    </p>
+  </div>
+  <div class="pg-num">8</div>
+</div>
+</div>
+
+<div class="spread" id="sp6">
+<div class="page page-left"><div class="page-lines" style=""></div><div class="page-frame"></div><div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div><div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div><div class="page-content" style="padding:20px;"><div class="art-block" style="flex:0 0 auto;position:relative;height:519px;"><div class="art-fc tl"></div><div class="art-fc tr"></div><div class="art-fc bl"></div><div class="art-fc br"></div><div class="art-caption"><br></div><img src="https://i.postimg.cc/xTBzzYQy/Chat-GPT-Image-15-apr-2026-g-23-46-20.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;"></div></div><div class="pg-num">9</div></div>
+<div class="page page-right"><div class="page-lines" style=""></div><div class="page-frame"></div><div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div><div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div><div class="page-content" style="padding:20px;"><div class="art-block inline-art" style="height:519px;position:relative;overflow:hidden;flex:0 0 auto;"><div class="art-fc tl"></div><div class="art-fc tr"></div><div class="art-fc bl"></div><div class="art-fc br"></div><div class="art-caption"><br></div><img src="https://i.postimg.cc/Ssm8xr4b/ART-IV-Zrec-odna2.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;"></div></div><div class="pg-num">10</div></div>
+</div>
+
+<div class="spread" id="sp7">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-ornament" style="position:relative;">🔱 ✦ 🔱</div>
+    <div class="ch-label" style="position:relative;">ГЛАВА ТРЕТЬЯ</div>
+    <div class="ch-title" style="position:relative;">Малзерис<br><em>или Демон, охотящийся на демонов</em></div>
+    <div class="divider" style="margin-bottom:8px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Тифлинги с детства знают, что такое взгляды в спину. Это не ненависть — ненависть хотя бы честна. Это страх, переодетый в подозрение: вдруг он всё-таки такой, каким выглядит? Вдруг рога — не просто рога?
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Малзерис вырос там, где таких взглядов не было — на континенте своего народа, где первая королева тифлингов построила нечто редкое: место, где можно просто жить. Он слышал её историю с колыбели. И хотел — искренне, по-детски — стать таким же.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Именно поэтому в шестнадцать лет он ушёл. Потому что героев не делают там, где уже безопасно.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Первый шаг на берег Миреля стоил ему свободы. Работорговцы появились раньше, чем высохли его следы на прибрежном песке. Кандалы легли на запястья прежде, чем он успел понять, что происходит.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      В подземельях он узнал кое-что важное: люди — не только те, кем их воспитали. Они ещё и те, кем решают стать, когда прижмёт. Его товарищи по цепи в тёмных коридорах иногда делились последним куском. Это что-то значило.
+    </p>
+  </div>
+  <div class="pg-num">11</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Поэтому, когда пришёл момент, он сделал то, что сделал бы любой герой из его детских историй: освободил их. Убил торговца. Открыл клетки.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Они сдали его страже в тот же день.</p>
+    <p class="quote-text" style="position:relative;">
+      Он не проклинал их.<br>
+      Он просто перестал ждать<br>
+      чего-то другого.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Именно с тех пор его лицо стало таким закрытым. Не злым — это важно. Внутри он по-прежнему сожалел о каждом убитом. По-прежнему помогал слабым, когда думал, что никто не видит. Просто теперь — тихо. Без ожидания ответа.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Меч «Бремя Королевы» лёг в его руку так, будто всегда был его. Дварф посмотрел на него долго, кивнул:
+    </p>
+    <p class="italic-text" style="position:relative;">— Хорошо. Идём.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Малзерис ждал продолжения. Годрин уже шёл к выходу — молот покачивался за спиной с тихим металлическим звоном.
+    </p>
+  </div>
+  <div class="pg-num">12</div>
+</div>
+</div>
+
+<div class="spread" id="sp8">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-ornament" style="position:relative;">⚜ ✦ ⚜</div>
+    <div class="ch-label" style="position:relative;">ГЛАВА ЧЕТВЁРТАЯ</div>
+    <div class="ch-title" style="position:relative;">Неджин Хант<br><em>или Тот, кто не стал героем</em></div>
+    <div class="divider" style="margin-bottom:8px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Историки Каладора оставили о нём одну строчку: «Неджин Хант — последний барон рубежных земель, павший в год Третьей волны». Даже это не совсем верно: он не пал. Он сделал кое-что другое.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Его семья воевала три поколения подряд. Не ради славы — слава здесь была бы неуместна. Они воевали, потому что иначе некому. Потому что за их спинами были деревни, поля, дети, которые должны вырасти и не знать слова «демон» ни из чего, кроме сказок.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Он потерял сестру в двадцать лет. Брата — в двадцать три. Отца — незадолго до третьей и самой страшной демонской волны. К тому моменту, когда он стоял один перед полководцем — огромной тварью ростом с башню, — у него осталось только одно: привычка не сдаваться.
+    </p>
+  </div>
+  <div class="pg-num">13</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Она появилась внезапно — маленькая девочка в потрёпанном плаще, от которой демоны разлетались в стороны, как пепел от ветра. Никогда прежде он не чувствовал в бою, что рядом кто-то, кто понимает тебя без слов, кто движется в том же ритме.
+    </p>
+    <div class="art-block inline-art" style="height:205px;position:relative;flex:0 0 auto;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <div class="art-caption">АРТ V · НЕДЖИН И ЛИРИОНА — ПЕРВЫЙ БОЙ ПЛЕЧОМ К ПЛЕЧУ</div>
+      <img src="https://i.postimg.cc/qqSWthhx/ART-V-Nedzin-i-Liriona.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Когда всё закончилось, она сказала ему:</p>
+    <p class="quote-text" style="font-size:11.5px;position:relative;">
+      «Иди за мной. Вместе мы<br>
+      спасём куда больше людей.<br>
+      Обещаю — будущее наступит».
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Будущее наступит. Именно с этими словами его войско всегда шло в бой. Ради этого погибли все, кто шёл за ним. И вот это говорит ему ребёнок.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Он пошёл за ней. Не потому что некуда идти. А потому что будущее — это звучало как причина.
+    </p>
+  </div>
+  <div class="pg-num">14</div>
+</div>
+</div>
+
+<div class="spread" id="sp9">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-ornament" style="position:relative;">🌸 ✦ 🌸</div>
+    <div class="ch-label" style="position:relative;">ГЛАВА ПЯТАЯ</div>
+    <div class="ch-title" style="position:relative;">Лириона<br><em>или Та, что несёт жизнь на острие меча</em></div>
+    <div class="divider" style="margin-bottom:8px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Мирель не знал богинь. Он знал только страх, голод и демонов. Церковь Принесённых Свету пришла с обещаниями: богини спустятся на землю, если найти для них правильный сосуд. Несколько смертей во время ритуала не добавляли оптимизма.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Лириона была обычной девочкой из обычной семьи. Голод она знала. Страх — тоже. Демонов видела из окна чаще, чем хотела бы.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      В то утро голос просто позвал её. Не громко — так, как зовут, когда очень надо, но мешать не хотят. Она пошла. Через поле боя, мимо падающих стражников, прямо в горящую церковь, где чаша стояла на пьедестале, окружённая умирающими.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      «Испей», — сказал кто-то. Или никто. Она взяла чашу и выпила.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Потом долго не могла объяснить, что изменилось. Стало не больше и не сильнее — стало полнее. Как будто до этого она жила в здании с заложенными комнатами, и вдруг стены рухнули, а за ними оказалось небо.
+    </p>
+  </div>
+  <div class="pg-num">15</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Деревня была очищена к рассвету. На месте, где пролилась её кровь — а она пролилась, ведь демонские когти не выбирают, — наутро выросли белые цветы. Люди смотрели на них и не понимали. Священники понимали слишком хорошо.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">«Приносящая жизнь» — так её назвал народ. Не за победу. За цветы.</p>
+    <div class="art-block inline-art" style="height:225px;position:relative;flex:0 0 auto;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <div class="art-caption">АРТ VI · ЛИРИОНА — ПОЛЕ БЕЛЫХ ЦВЕТОВ ПОСЛЕ БИТВЫ</div>
+      <img src="https://i.postimg.cc/6qtFCJYZ/ART-VI-Liriona-sredi-cvetov.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Пятый глоток из чаши изменил её навсегда: крылья выросли за одну ночь — белые, тихие, тёплые. Богиня ушла из неё. Но что-то осталось. Что-то, делавшее её меч смертью для демонов, а её кровь — семенем жизни.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Церковь провозгласила её защитницей. Она взяла Неджина и пошла дальше — туда, где нужнее.
+    </p>
+  </div>
+  <div class="pg-num">16</div>
+</div>
+</div>
+
+<div class="spread" id="sp10">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-ornament" style="position:relative;">📖 ✦ 📖</div>
+    <div class="ch-label" style="position:relative;">ГЛАВА ШЕСТАЯ</div>
+    <div class="ch-title" style="position:relative;">Слово Библиотекаря<br><em>или Бог, которого давно забыли</em></div>
+    <div class="divider" style="margin-bottom:8px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Он приходит по-разному. Забытый бог не является в облаке золотого света — такие боги ещё помнят, что им должны. Этот давно потерял счёт долгам. Он просто оставляет знамения — тихие, неочевидные, легко принять за сон.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Годрин нашёл записку прямо на наковальне. Написана старым языком, который дварфы не используют уже два века. Разбирал три дня с тихой руганью. Смысл: «Иди на перекрёсток у южного склона. Возьми молот. Там тебя найдут».
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Малзерис услышал голос ночью у костра — как шелест страниц. «Ты ещё не нашёл тех, кто заслуживает доверия. Но они ищут тебя. Иди к кузнецу из Громоборода».
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Лириона видела его во сне: старик в огромной библиотеке. Бесконечные полки. Он не смотрел на неё, листал что-то, потом остановился:
+    </p>
+    <p class="quote-text" style="position:relative;">
+      «Ты уже знаешь, куда идти.<br>
+      Я просто хотел сказать:<br>
+      я слежу за записями».
+    </p>
+  </div>
+  <div class="pg-num">17</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-ornament" style="position:relative;">🍺 ✦ 🍺</div>
+    <div class="ch-label" style="position:relative;">ГЛАВА СЕДЬМАЯ</div>
+    <div class="ch-title" style="position:relative;">Таверна «Три Дороги»<br><em>или Как всё могло пойти иначе</em></div>
+    <div class="divider" style="margin-bottom:7px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Таверна стояла на перекрёстке трёх дорог. Пиво у хозяина было отличным, еда — сносной, сено в конюшне — чистым. Большего от придорожной таверны никто и не просит.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Годрин явился первым — примерно за час до остальных, потому что чувствовал, что сначала нужно выпить. Занял угловой стол и сидел с видом человека, которому всё ясно, хотя на самом деле ему было ясно очень немногое.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Малзерис вошёл через час — тихо, в капюшоне, занял место у стены. Огляделся. Увидел дварфа. Дварф помахал ему кружкой с видом человека, ждавшего именно его.
+    </p>
+    <p class="italic-text" style="position:relative;">— Ты тот тифлинг, которому я дал меч. Садись.</p>
+    <p class="italic-text" style="position:relative;">— Спасибо за меч, — ответил Малзерис, садясь. — Он хороший.</p>
+    <p class="italic-text" style="position:relative;">— Знаю, — сказал Годрин. — Я делал.</p>
+  </div>
+  <div class="pg-num">18</div>
+</div>
+</div>
+
+<div class="spread" id="sp11">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Молчание. Оба смотрели в кружки. Молчание у дварфа имело особую текстуру — плотное, тёплое, не требующее немедленного заполнения. Малзерис это почувствовал. Напрягся чуть меньше.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Лириона и Неджин вошли одновременно — она первой, он придерживал дверь. Несколько посетителей обернулись. Белые крылья, даже сложенные, занимают место. Девочка прошла через зал с тем спокойным видом, который бывает только у тех, кто давно перестал думать о том, как выглядит.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Годрин уставился на крылья секунды три, потом поднял кружку в приветственном жесте.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Жрец появилась последней — просто была уже там, когда Неджин сел. Высокая, в тёмном дорожном плаще. Оглядела стол: дварф с кружкой, тифлинг в капюшоне, девочка с крыльями, рыцарь без армии.
+    </p>
+    <p class="italic-text" style="position:relative;">— Вот значит как, — сказала она голосом, в котором не было ничего, — это то, с чем мне придётся работать.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Годрин налил ей в пустую кружку.</p>
+    <p class="italic-text" style="position:relative;">— Садись. Хуже было.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Она села. Не потому что хотела. Потому что что-то в этом голосе — тихое, без претензий, без иллюзий — сказало ей, что этот дварф говорит правду.
+    </p>
+  </div>
+  <div class="pg-num">19</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="divider" style="position:relative;margin-bottom:40px;height:85px;overflow:hidden;flex:0 0 auto;"><br><br>— ✦ ✦ ✦ —</div>
+    <div class="art-block inline-art" style="height:211px;position:relative;flex:0 0 auto;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <div class="art-caption">ИЛЛЮСТРАЦИЯ</div>
+      <img src="https://i.postimg.cc/nLT3NjkK/ART-VII-Pervaa-vstreca-v-taverne.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+    <div class="divider" style="position:relative;height:120px;overflow:hidden;flex:0 0 auto;margin-bottom:28.5px;"><br><br><br><br>— ✦ ✦ ✦ —<br></div>
+  </div>
+  <div class="pg-num">20</div>
+</div>
+</div>
+
+<div class="spread" id="sp12">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-label" style="margin-top:8px;position:relative;">ЗАМЕТКИ НА ПОЛЯХ</div>
+    <div class="divider" style="position:relative;">— ✦ —</div>
+    <div class="ch-title" style="font-size:12px;position:relative;">О первых днях пути</div>
+    <div class="divider" style="margin-bottom:8px;position:relative;">— ✦ —</div>
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Первый день прошёл почти без слов. Пятеро незнакомцев, каждый из которых привык доверять в лучшем случае себе, шли по одной дороге и думали каждый о своём.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      На привале Годрин разложил костёр так быстро, будто делал это в полусне. Малзерис исчез на полчаса и вернулся с дичью — так тихо, что никто не успел сказать. Неджин начал было чистить котелок, но Жрец молча взяла его из рук. Лириона смотрела на огонь, и в отсветах пламени её белые крылья казались золотыми.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      — Хорошее мясо, — сказал Годрин Малзерису.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Тифлинг ничего не ответил. Но что-то в углах его рта стало чуть мягче. Жрец заметила. Ничего не сказала.
+    </p>
+  </div>
+  <div class="pg-num">21</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="ch-label" style="margin-top:8px;position:relative;">ИНТЕРЛЮДИЯ</div>
+    <div class="ch-title" style="font-size:11px;position:relative;">О пользе хранить оружие самому</div>
+    
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Второй привал казался спокойным. До определённого момента. Годрин решил продемонстрировать Малзерису «правильный хват», хотя тот прекрасно знал, как пользоваться мечом.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      — Вот, смотри, — сказал Годрин, берясь за рукоять. — Когда делаешь вот этот разворот, нужно держать не так, а вот...
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Меч, заряженный накопленным бременем, вырвался из дварфьих рук от неловкого движения, описал дугу и срезал Годрину правую руку по запястье.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Рука упала в траву. Годрин посмотрел на место, где она только что была. На меч. На руку. Помолчал.
+    </p>
+    <p class="italic-text" style="position:relative;">— А, — сказал он.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Жрец обернулась. Увидела. Её лицо прошло через несколько состояний за полсекунды — и остановилось на профессиональной ярости специалиста, которого вынуждают заниматься глупостями.</p>
+    <p class="italic-text" style="position:relative;">— Это. Что. Было.</p>
+    <p class="italic-text" style="position:relative;">— Меч скользкий, — сообщил Годрин с видом человека, делящегося наблюдением.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Жрец потратила камень воскрешения на восстановление. Приделала руку обратно с видом человека, который просто не может позволить себе провалить задачу. Встала.
+    </p>
+    <p class="italic-text" style="position:relative;">— Ты идиот.</p>
+    <p class="italic-text" style="position:relative;">— Зато рука на месте. Спасибо.</p>
+  </div>
+  <div class="pg-num">22</div>
+</div>
+</div>
+
+<div class="spread" id="sp13">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Той ночью — когда, по её убеждению, все спали — Жрец сидела у догорающего костра и тихо смеялась. Коротко. Один раз. Как будто случайно.
+    </p>
+    <div class="divider" style="position:relative;">— ✦ —</div>
+    <div class="ch-label" style="margin-top:5px;position:relative;">НЕСКОЛЬКО ДНЕЙ СПУСТЯ</div>
+    <div class="ch-title" style="font-size:11px;position:relative;">Второй инцидент с Годрином</div>
+    <div class="divider" style="margin-bottom:7px;position:relative;">— ✦ —</div>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      На четвёртый день пути молот пал на голову своего хозяина. Годрин нёс его за спиной на ремне, который сам же и сделал. Ремень оказался плохо пришитым к пряжке — что выяснилось, когда дварф полез на скальный уступ «посмотреть на дорогу сверху», хотя дорога была видна снизу.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Молот сполз, ремень лопнул, и несколько килограммов металла встретились с дварфийской головой. Звук был таким, что птицы поднялись с ближайших деревьев.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Неджин добрался первым, перевернул — нет пульса. Малзерис закрыл глаза. Жрец подошла медленно, посмотрела долго. Лицо было совершенно неподвижным — что означало, по опыту последних дней, что внутри происходит что-то очень интенсивное.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Она потратила второй камень воскрешения. Годрин открыл глаза:</p>
+    <p class="italic-text" style="position:relative;">— Ремень надо поменять.</p>
+  </div>
+  <div class="pg-num">23</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Жрец встала. Повернулась спиной. Ушла вперёд по дороге и остановилась, глядя в никуда. Неджин видел, как её плечи поднялись и опустились — один долгий выдох, который что-то в ней выровнял.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Когда она вернулась, лицо снова было обычным — чуть холодным, чуть усталым. Всё на месте.
+    </p>
+    <p class="italic-text" style="position:relative;">— Следующий раз, когда ты умрёшь по собственной глупости, я оставлю тебя мёртвым на час. Посиди, подумай.</p>
+    <p class="italic-text" style="position:relative;">— Справедливо, — согласился Годрин.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Малзерис помог ему встать — молча, подав руку. Годрин взял её без слов. Что-то небольшое, но настоящее прошло между ними в этом движении.
+    </p>
+    <div class="divider" style="position:relative;">— ✦ —</div>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      — Ты не доверяешь никому из нас, — сказал ночью Неджин Малзерису. Не как обвинение. Как наблюдение.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Малзерис не ответил. Потом:</p>
+    <p class="italic-text" style="position:relative;">— Не пока.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Годрин подсел с другой стороны. Никто его не звал. Это не остановило бы дварфа никогда.
+    </p>
+    <p class="italic-text" style="position:relative;">
+      — Те, кто тебя предал, были напуганы. А иногда стоит смотреть внимательно — иначе пропустишь, когда будет хорошее.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Малзерис чуть передвинулся ближе к костру. К остальным. На два шага. Но всё же.
+    </p>
+  </div>
+  <div class="pg-num">24</div>
+</div>
+</div>
+
+<div class="spread" id="sp14">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    
+    <div class="ch-label" style="position:relative;">ГЛАВА ДЕВЯТАЯ</div>
+    <div class="ch-title" style="position:relative;">Врата Тёмного Каньона<br><em>или Конец начала</em></div>
+    
+    <p class="body-text drop-cap" style="position: relative; line-height: 1.6;">
+      Знамение привело их к скальному проходу в двух днях пути от последней деревни. Местные называли это место «Тёмный Каньон»: ущелье, в которое не заходит солнце ни в какое время года. Глубоко внутри — провал в землю, окружённый старыми стенами, покрытыми письменами на языке, которого никто из пятерых не читал.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Жрец смотрела на письмена дольше остальных. Потом:</p>
+    <p class="italic-text" style="position:relative;">— Это предупреждение. Войти можно. Выйти — сложнее.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Все посмотрели на дыру в земле. Дыра смотрела обратно. Из неё тянуло холодом и чем-то ещё — не запахом, а ощущением. Что-то живёт там. Что-то старое.
+    </p>
+    <p class="italic-text" style="position:relative;">— Я пойду первым, — сказал Годрин, деловито поправляя молот.</p>
+    <p class="italic-text" style="position:relative;">— Почему ты?</p>
+    <p class="italic-text" style="position:relative;">— Потому что я дварф. Мы с темнотой старые знакомые. И если там ловушка — меня вас потом легче оживлять.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Жрец открыла рот. Закрыла. Это была логика. Ужасающая, но логика.</p>
+    <p class="italic-text" style="position:relative;">— Камней у меня осталось два. Умрёшь больше двух раз — уйдём без тебя.</p>
+    <p class="italic-text" style="position:relative;">— Значит, умру не больше двух раз, — пообещал Годрин.</p>
+  </div>
+  <div class="pg-num">25</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <p class="body-text" style="position: relative; line-height: 1.6;">
+      Остальные переглянулись. Малзерис пошёл вторым, молча и без объяснений. Неджин — третьим, потому что так правильно. Лириона — рядом с ним, потому что она всегда шла туда, куда нужно. Жрец — последней: кто-то должен следить за тылом, и потому что она не собиралась позволять им умирать раньше, чем придётся.
+    </p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Темнота приняла их.</p>
+    <p class="body-text" style="position: relative; line-height: 1.6;">Что случилось дальше — разговор следующего тома.</p>
+    <div class="end-ornament" style="margin-top:12px;position:relative;">⁂</div>
+    <p class="italic-text" style="font-size:10px;margin-top:8px;opacity:0.65;position:relative;">
+      Бард Таэлин кладёт перо.<br>
+      За окном таверны темнеет.<br>
+      Он ещё не знает, чем это закончится.<br>
+      Но он знает, что они вошли все пятеро.
+    </p>
+  </div>
+  <div class="pg-num">26</div>
+</div>
+</div>
+
+<div class="spread" id="sp15">
+<div class="page page-left">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-bl"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="art-block" style="flex:1 1 0%;position:relative;">
+      <div class="art-fc tl"></div><div class="art-fc tr"></div>
+      <div class="art-fc bl"></div><div class="art-fc br"></div>
+      <img src="https://i.postimg.cc/sgqCBLSh/ART-VIII-Vrata-Temnogo-Kan'ona.png" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1;">
+    </div>
+  </div>
+  <div class="pg-num">27</div>
+</div>
+<div class="page page-right">
+  <div class="page-lines" style=""></div><div class="page-frame"></div>
+  <div class="co co-tr"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="co co-br"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,90,43,0.5)" stroke-width="1.2"><path d="M2 2L2 10M2 2L10 2M2 2Q6 6 12 12"></path></svg></div>
+  <div class="page-content">
+    <div class="end-page" style="position:relative;">
+      <div class="ch-ornament" style="font-size:28px;margin-bottom:14px;">⚜</div>
+      <div class="end-title">Конец Первого Тома</div>
+      <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--red-ink);letter-spacing:2px;margin-top:4px;opacity:0.85;">«ВСТРЕЧА»</div>
+      <div class="divider" style="margin:14px 0;">— ✦ ✦ ✦ —</div>
+      <p class="italic-text" style="font-size:10.5px;line-height:2;margin-bottom:14px;">
+        Они вошли все пятеро.<br>
+        Один дварф. Одна эльфийка.<br>
+        Один тифлинг. Один рыцарь. Одна богиня.<br>
+        Ни одного героя — пока.
+      </p>
+      <div class="divider">— ✦ —</div>
+      <p class="italic-text" style="font-size:9.5px;margin-top:14px;opacity:0.6;">Продолжение в Томе Втором:</p>
+      <div style="font-family:'Cinzel Decorative',serif;font-size:11px;color:var(--red-ink);margin-top:5px;letter-spacing:1px;">«Глубина»</div>
+      <p class="italic-text" style="font-size:9px;margin-top:7px;opacity:0.45;">
+        Тёмный Каньон хранит тайны.<br>И не все из них безмолвны.
+      </p>
+      <div class="ch-ornament" style="font-size:14px;margin-top:20px;opacity:0.25;">✦ ✦ ✦</div>
+    </div>
+  </div>
+  <div class="pg-num">28</div>
+</div>
+</div></div>
+<div id="flipper" style="display:none;"><div class="flip-front" id="flipFront"></div><div class="flip-back" id="flipBack"></div></div>
+<div class="pages-stack"></div><div class="book-glow"></div>
+</div></div></div>
+<div class="nav"><button class="nav-btn" id="btnPrev" onclick="goPage(-1)" disabled>◄ НАЗАД</button><div class="pg-counter" id="pgCounter">ОБЛОЖКА</div><button class="nav-btn" id="btnNext" onclick="goPage(1)">ДАЛЕЕ ►</button></div>
+<script>
+const TOTAL=16,LABELS=["ОБЛОЖКА","II — III","1 — 2","3 — 4","5 — 6","7 — 8","9 — 10","11 — 12","13 — 14","15 — 16","17 — 18","19 — 20","21 — 22","23 — 24","25 — 26","27 — 28"],PW=380,PH=580;
+let current=0,busy=false,isOpen=false;
+const sc=document.getElementById('spreadsContainer');
+const book=document.getElementById('book');
+function resize(){
+  document.querySelectorAll('.page').forEach(p=>{p.style.width=PW+'px';p.style.height=PH+'px';});
+  document.querySelectorAll('.cover-wrap').forEach(c=>{c.style.width=PW+'px';c.style.height=PH+'px';c.style.borderRadius='0 4px 4px 0';});
+  document.querySelector('.spine').style.height=PH+'px';
+  sc.style.width=(isOpen?PW*2:PW)+'px';sc.style.height=PH+'px';
+  book.style.height=PH+'px';
+  const f=document.getElementById('flipper');f.style.width=PW+'px';f.style.height=PH+'px';f.style.left=PW+'px';
+}
+window.addEventListener('resize',resize);
+const db=document.getElementById('dustBox');for(let i=0;i<22;i++){const p=document.createElement('div');p.className='dust-particle';const sz=1+Math.random()*2.5;p.style.cssText='left:'+Math.random()*100+'%;width:'+sz+'px;height:'+sz+'px;animation-duration:'+(9+Math.random()*14)+'s;animation-delay:'+Math.random()*12+'s;opacity:'+(0.15+Math.random()*0.4)+';';db.appendChild(p);}
+function getSp(i){return document.getElementById('sp'+i);}
+function cloneP(i,s){const sp=getSp(i);if(!sp)return document.createElement('div');if(i===0){const cw=sp.querySelector('.cover-wrap');if(cw){const c=cw.cloneNode(true);c.style.cssText+=';position:absolute;inset:0;width:100%;height:100%;border-radius:0;';return c;}}const pp=sp.querySelectorAll('.page');const t=pp[s];if(!t)return document.createElement('div');const c=t.cloneNode(true);c.style.cssText+=';position:absolute;inset:0;width:100%;height:100%;';return c;}
+function goPage(d){if(busy)return;const n=current+d;if(n<0||n>=TOTAL)return;busy=true;
+  if(current===0&&d>0){getSp(0).classList.remove('active');isOpen=true;sc.style.width=(PW*2)+'px';setTimeout(()=>{getSp(n).classList.add('active');current=n;updateNav();busy=false;},650);return;}
+  if(n===0&&d<0){getSp(current).classList.remove('active');getSp(0).classList.add('active');isOpen=false;sc.style.width=PW+'px';setTimeout(()=>{current=0;updateNav();busy=false;},650);return;}
+  const fl=document.getElementById('flipper'),ff=document.getElementById('flipFront'),fb=document.getElementById('flipBack');
+  fl.style.width=PW+'px';fl.style.height=PH+'px';fl.style.display='block';ff.innerHTML='';fb.innerHTML='';
+  if(d>0){fl.style.left=PW+'px';fl.style.transformOrigin='left center';ff.appendChild(cloneP(current,1));const bc=cloneP(n,0);bc.style.transform='scaleX(-1)';fb.appendChild(bc);}
+  else{fl.style.left='0px';fl.style.transformOrigin='right center';ff.appendChild(cloneP(current,0));const bc=cloneP(n,1);bc.style.transform='scaleX(-1)';fb.appendChild(bc);}
+  getSp(current).classList.remove('active');getSp(n).classList.add('active');
+  fl.className=(d>0?'flipping-forward':'flipping-back');
+  fl.addEventListener('animationend',()=>{fl.className='';fl.style.display='none';ff.innerHTML='';fb.innerHTML='';current=n;updateNav();busy=false;},{once:true});
+}
+function updateNav(){document.getElementById('btnPrev').disabled=current===0;document.getElementById('btnNext').disabled=current===TOTAL-1;document.getElementById('pgCounter').textContent=LABELS[current]||String(current);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')goPage(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goPage(-1);});
+let tx=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)goPage(dx<0?1:-1);},{passive:true});
+resize();updateNav();
+</script></body></html>
